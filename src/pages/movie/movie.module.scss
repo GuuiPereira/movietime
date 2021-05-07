@@ -1,0 +1,246 @@
+
+@media(max-width: 920px){
+  .divThumb{
+    display: none;
+  }
+
+
+}
+.movie {
+
+  .thumbnailContainer{
+
+    background-size: cover!important;
+    background-position: 50%!important;
+    width: 100%;
+    height: 600px;
+    padding: 40px 20px;
+    box-sizing: border-box;
+
+    
+
+    .divContent{
+      max-width: 1280px;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+      background: rgba(0,0,0,.7);
+      position: relative;
+      display: flex;
+
+      .divSeeVideo{
+        position:absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        color: var(--white);
+      }
+
+      .divThumb{
+        width: 350px;
+        min-width: 350px;
+        height: 100%;
+        overflow: hidden;
+    
+        img{
+          width: 500px;
+          height: 100%;
+          max-width: 100%;
+          max-height: 100%;
+          transition: all .3s;
+          box-sizing: border-box;
+        }
+
+      }
+  
+      .divInfo{
+        
+        padding: 2rem 4rem;
+        >div{
+          margin-top: 1.5rem;
+          font-size: 20px;
+          display: flex;
+          justify-content: space-between;
+          
+          >div{
+            display: flex;
+            align-items: center;
+          }
+        }
+        
+        h1,h3,p {
+          color: var(--white);
+        }
+        h3{
+          margin-top: 1.5rem;
+        }
+  
+      }
+    }
+  }
+
+  .movieActors{
+
+
+    padding: 2rem 4rem;
+    .movieActorsGrid{
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      .card{
+        min-width: 400px;
+        width: 400px;
+        display: flex;
+        background: #fff;
+        border-radius: 3px;
+        overflow: hidden;
+        box-shadow: 10px 10px 15px 0 rgb(0 0 0 / 30%);
+        .cardColumn1{
+          min-width:200px;
+          flex:1;
+          height: 240px;
+          text-align: center;
+          .profile {
+            
+            .image{
+              position: relative;
+              width: 70px;
+              height: 70px;
+              margin: 38px auto 0 auto;
+              .circle1{
+                position: absolute;
+                box-sizing: border-box;
+                width: 76px;
+                height: 76px;
+                top: -3px;
+                left: -3px;
+                border-width: 1px;
+                border-style: solid;
+                border-color: var(--purple-800) var(--purple-800) var(--purple-800) transparent;
+                border-radius: 50%;
+                transition: all 1.5s ease-in-out;
+              }
+              .circle2{
+                @extend .circle1;
+                width: 82px;
+                height: 82px;
+                top: -6px;
+                left: -6px;
+                border-color: var(--purple-800) transparent var(--purple-800) var(--purple-800);;
+              }
+
+              img {
+                display: block;
+                border-radius: 50%;
+                background: #F5E8DF;
+              }
+
+              &:hover {
+                cursor: pointer;
+                
+                .circle1 {
+                  transform: rotate(360deg);
+                }
+                
+                .circle2 {
+                  transform: rotate(-360deg);
+                }
+                
+              }
+
+            }
+
+            .name {
+              font-size: 15px;
+              font-weight: 600;
+              margin-top: 20px;
+            }
+            
+            .job {
+              font-size: 11px;
+              line-height: 15px;
+            }
+            .actions {
+              margin-top: 24px;
+              .btnFollow{
+                
+                display: block;
+                width: 120px;
+                height: 30px;
+                margin: 0 auto 10px auto;
+                background: none;
+                border: 1px solid var(--purple-800);;
+                border-radius: 15px;
+                font-size: 12px;
+                font-weight: 600;
+                box-sizing: border-box;
+                transition: all .3s ease-in-out;
+                color: var(--purple-800);;
+                
+                &:hover {
+                  background: var(--purple-800);;
+                  color: var(--white);
+                }
+              }
+            }
+            
+          }
+
+        }
+        .cardColumn2.fadeIn {
+          display: grid !important;
+          animation: fadein 0.5s ;
+        }
+       
+        @keyframes fadein {
+          from  {
+            width: 0;
+          }
+          to {
+            width: 120px;
+          }   
+        }
+
+        .cardColumn2{
+  
+          width: 120px;
+          display: none;
+          grid-template-rows: auto auto auto;
+          gap: 1px;
+          .box {
+            padding: 0 0.3rem;
+            box-sizing: border-box;
+            height: 80px;
+            background: var(--purple-100);
+            text-align: center;
+            transition: all 0.4s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            &:hover {
+              background: var(--purple-300);
+              cursor: pointer;
+            }
+            .value {
+              font-size: 12px;
+              font-weight: 600;
+            }
+            
+            .parameter {
+              font-size: 8px;
+            }
+          }
+          
+        }
+      }
+    
+
+    }
+
+  }
+
+}

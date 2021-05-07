@@ -1,0 +1,35 @@
+.containerHeader{
+  
+  background: var(--purple-800);
+  color: var(--white);
+  height: 6.5rem;
+  display: flex;
+  align-items: center;
+  padding: 2rem 8rem;
+
+  a{
+    display: flex;
+    color: var(--white);
+    text-decoration: none;
+
+    p{
+      margin-left: 2rem;
+      padding: 0.25rem 0;
+      padding-right: 2rem;
+      text-transform: capitalize;
+      font-family: 'Dancing Script';
+      font-size: 3rem;
+      border-right: 1px solid var(--gray-100);
+    }
+
+    span{
+      margin: auto 2rem;
+    }
+    
+  }
+  >span{
+    margin-left: auto;
+    text-transform: capitalize;
+  }
+
+}
