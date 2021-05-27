@@ -105,7 +105,7 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
 
       }
       if (lastMoviesList.length === 0) setLastMoviesList([...allMoviesList]);
-      const { data } = await api.get('search/movie/', {
+      const { data } = await api.get('search/movie', {
         params: {
           api_key: '8a4c6b0f0998443743f4f5999a261c84',
           language: 'pt-BR',
