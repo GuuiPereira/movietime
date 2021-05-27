@@ -106,7 +106,6 @@ type MovieProps = {
 export default function Episode({ movie }: MovieProps) {
 
   const [actorDetailsList, setActorDetailsList] = useState([] as Person[]);
-
   const clickSeeMore = async (e, id: number) => {
 
     const target: HTMLButtonElement = e.target;
@@ -123,7 +122,7 @@ export default function Episode({ movie }: MovieProps) {
     if (filter.length > 0) {
 
       return;
-
+      
     }
 
     const { data } = await api.get(`/person/${id}`, {
@@ -143,7 +142,7 @@ export default function Episode({ movie }: MovieProps) {
     img: {
       background: `url("http://image.tmdb.org/t/p/w1280/${movie.backdrop_path}")`
     }
-  }
+  };
 
   return (
     <div className={styles.movie}>
@@ -261,7 +260,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 }
 export const getStaticProps: GetStaticProps = async (ctx) => {
-
+  
   const { movie } = ctx.params;
   const info = await api.get(`/movie/${movie}`, {
     params: {
@@ -285,10 +284,8 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   });
 
   const videos: Video[] = respVideo.data.results;
-
-  console.log(videos)
-
   const ret: Movie = info.data;
+
   ret.principalActors = credits.data.cast.slice(0, 8);
   ret.crew = credits.data.crew;
   if (videos.length > 0) {

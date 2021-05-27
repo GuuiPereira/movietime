@@ -6,6 +6,7 @@ import { api } from "../services/api"
 
 import styles from './home.module.scss';
 import { useEffect, useRef, useState } from "react";
+import React from "react";
 
 type Movie = {
   adult: boolean,
@@ -40,8 +41,10 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
 
   const backgroundRef = useRef<HTMLDivElement>(null);
   const [allMoviesList, setAllMoviesList] = useState([] as Movie[]);
+  const [lastMoviesList, setLastMoviesList] = useState([] as Movie[]);
   const [isFetching, setIsFetching] = useState(false);
   const [actualPage, setActualPage] = useState(1);
+  let searchTimeout;
 
   useEffect(() => {
     // window is accessible here.
@@ -61,8 +64,11 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
 
 
   function handleScroll() {
+
     if (window.innerHeight + document.documentElement.scrollTop === document.scrollingElement.scrollHeight) {
+
       setIsFetching(true);
+
     }
   }
 
@@ -85,6 +91,35 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
 
   }
 
+  async function searchMovie(key: string) {
+
+    if (searchTimeout) clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(async () => {
+
+      if (key === '') {
+
+        setAllMoviesList([...lastMoviesList]);
+        setLastMoviesList([]);
+        return;
+
+      }
+      if (lastMoviesList.length === 0) setLastMoviesList([...allMoviesList]);
+      const { data } = await api.get('search/movie/', {
+        params: {
+          api_key: '8a4c6b0f0998443743f4f5999a261c84',
+          language: 'pt-BR',
+          query: key
+        }
+      });
+
+      const res: MovieResponse = data;
+      const searchRC: Movie[] = res.results;
+      setAllMoviesList(searchRC);
+    }, 500);
+
+  }
+
   return (
     <div className={styles.containerHomepage} >
       <Head>
@@ -103,6 +138,18 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
         </div>
 
       </section>
+
+      <div className={styles.searchContainer}>
+
+        <input type="text"
+          placeholder="Search"
+          onInput={(e) => {
+            searchMovie(e.currentTarget.value)
+          }}>
+        </input>
+        <div className={styles.search}></div>
+
+      </div>
 
       <section className={styles.allMovies}>
         <h1>Filmes Populares</h1>
