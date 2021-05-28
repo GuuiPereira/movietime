@@ -3,14 +3,31 @@ import { api } from '../../services/api';
 
 import { MdAccessTime, MdAttachMoney, MdMoneyOff } from 'react-icons/md';
 import { ImYoutube2, ImVimeo2 } from 'react-icons/im';
-
 import { convertMinutesToTimeString } from '../../utils/convertMinutesToTimeString';
 import { convertNumberToMoney } from '../../utils/convertNumberToMoney';
+
 import Head from "next/head";
+import Link from "next/link";
 
 import styles from './movie.module.scss';
 import { useState } from 'react';
 
+type Similar = {
+  adult: boolean,
+  backdrop_path: string,
+  genres: { id: number, name: string }[],
+  id: number,
+  original_language: string,
+  original_title: string,
+  overview: string,
+  popularity: number,
+  poster_path: string,
+  release_date: string,
+  title: string,
+  video: boolean,
+  vote_average: number,
+  vote_count: number,
+}
 type Movie = {
   adult: boolean,
   backdrop_path: string,
@@ -39,7 +56,8 @@ type Movie = {
   vote_count: number,
   principalActors: Cast[],
   crew: Crew[],
-  trailer: Video
+  trailer: Video,
+  similar: Similar[]
 }
 
 type Cast = {
@@ -122,7 +140,7 @@ export default function Episode({ movie }: MovieProps) {
     if (filter.length > 0) {
 
       return;
-      
+
     }
 
     const { data } = await api.get(`/person/${id}`, {
@@ -189,7 +207,7 @@ export default function Episode({ movie }: MovieProps) {
                 <ImVimeo2 fontSize={50} ></ImVimeo2>
               </a>
             )
-            
+
           }
 
         </div>
@@ -246,6 +264,26 @@ export default function Episode({ movie }: MovieProps) {
         </div>
       </div>
 
+      <div className={styles.movieSimilar}>
+        <h1>Filmes Similares</h1>
+        <div className={styles.movieGrid}>
+          {movie.similar.map((similarMovie, index) => {
+            return (
+              <div key={similarMovie.id} className={styles.movieGridItem}>
+                <div>
+                  <Link href={`/movie/${similarMovie.id}`}>
+                    <a>
+                      <img src={`http://image.tmdb.org/t/p/w500/${similarMovie.poster_path}`}>
+                      </img>
+                    </a>
+                  </Link>
+                </div>
+
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }
@@ -260,7 +298,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 }
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  
+
   const { movie } = ctx.params;
   const info = await api.get(`/movie/${movie}`, {
     params: {
@@ -276,6 +314,13 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     }
   });
 
+  const similar = await api.get(`/movie/${movie}/similar`, {
+    params: {
+      api_key: '8a4c6b0f0998443743f4f5999a261c84',
+      language: 'pt-BR',
+    }
+  });
+
   const respVideo = await api.get(`/movie/${movie}/videos`, {
     params: {
       api_key: '8a4c6b0f0998443743f4f5999a261c84',
@@ -284,10 +329,14 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   });
 
   const videos: Video[] = respVideo.data.results;
+  const similarTop5 = similar.data.results.slice(0, 5);
+
   const ret: Movie = info.data;
 
   ret.principalActors = credits.data.cast.slice(0, 8);
   ret.crew = credits.data.crew;
+  ret.similar = similarTop5;
+
   if (videos.length > 0) {
 
     ret.trailer = videos[0];
