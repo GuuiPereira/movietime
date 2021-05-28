@@ -43,13 +43,16 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
   const [allMoviesList, setAllMoviesList] = useState([] as Movie[]);
   const [lastMoviesList, setLastMoviesList] = useState([] as Movie[]);
   const [isFetching, setIsFetching] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [actualPage, setActualPage] = useState(1);
+  const [actualPageSearch, setActualPageSearch] = useState(1);
+  const [actualKeySearch, setActualKeySearch] = useState('');
+
   let searchTimeout;
 
   useEffect(() => {
     // window is accessible here.
     setAllMoviesList(allMovies);
-    console.log(backgroundRef.current)
     backgroundRef.current.style.background = `linear-gradient(rgba(0, 0, 0, 0) 39%,rgba(0, 0, 0, 0) 41%, rgba(0, 0, 0, 0.65) 100%),url(http://image.tmdb.org/t/p/w1280/${spotlightMovie.backdrop_path}),rgb(28, 28, 28)`;
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -57,11 +60,19 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
   }, []);
 
   useEffect(() => {
+
     if (!isFetching) return;
-    setActualPage(actualPage + 1);
+    if (isSearching) setActualPageSearch(actualPageSearch + 1);
+    else setActualPage(actualPage + 1);
     loadMoreMovies();
+
   }, [isFetching]);
 
+  useEffect(() => {
+
+    setActualPageSearch(1);
+
+  }, [actualKeySearch]);
 
   function handleScroll() {
 
@@ -73,6 +84,31 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
   }
 
   async function loadMoreMovies() {
+    let res: MovieResponse;
+    if (isSearching) {
+      res = await getSearchMovies(actualKeySearch);
+      const searchRC: Movie[] = res.results;
+      const merge = [...allMoviesList, ...searchRC];
+      const noduplicateId = merge.filter((thing, index, self) =>
+        index === self.findIndex((t) => (
+          t.id === thing.id
+        ))
+      );
+      setAllMoviesList(noduplicateId);
+      setIsFetching(false);
+      return;
+    }
+
+    res = await getPopularMovies();
+    const list = allMoviesList;
+    const newList: Movie[] = res.results;
+    const listResult = list.concat(newList);
+    setAllMoviesList(listResult);
+    setIsFetching(false);
+
+  }
+
+  async function getPopularMovies() {
 
     const { data } = await api.get('movie/popular', {
       params: {
@@ -83,11 +119,23 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
     });
 
     const res: MovieResponse = data;
-    const list = allMoviesList;
-    const newList: Movie[] = res.results;
-    const listResult = list.concat(newList);
-    setAllMoviesList(listResult);
-    setIsFetching(false);
+    return res;
+
+  }
+
+  async function getSearchMovies(key: string, page?: number) {
+
+    const { data } = await api.get('search/movie', {
+      params: {
+        api_key: '8a4c6b0f0998443743f4f5999a261c84',
+        language: 'pt-BR',
+        page: page ? page : (actualPageSearch + 1),
+        query: key
+      }
+    });
+
+    const res: MovieResponse = data;
+    return res;
 
   }
 
@@ -101,21 +149,18 @@ export default function Home({ spotlightMovie, allMovies }: HomeProps) {
 
         setAllMoviesList([...lastMoviesList]);
         setLastMoviesList([]);
+        setIsSearching(false);
+        setActualKeySearch('');
         return;
-
       }
-      if (lastMoviesList.length === 0) setLastMoviesList([...allMoviesList]);
-      const { data } = await api.get('search/movie', {
-        params: {
-          api_key: '8a4c6b0f0998443743f4f5999a261c84',
-          language: 'pt-BR',
-          query: key
-        }
-      });
 
-      const res: MovieResponse = data;
+      if (lastMoviesList.length === 0) setLastMoviesList([...allMoviesList]);
+      const res: MovieResponse = await getSearchMovies(key, 1);
       const searchRC: Movie[] = res.results;
+      setActualKeySearch(key);
       setAllMoviesList(searchRC);
+      setIsSearching(true);
+
     }, 500);
 
   }

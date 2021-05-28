@@ -135,12 +135,12 @@
         cursor: pointer;
       }
       &:focus {
-        width: 100%;;
+        width: 90%;;
         opacity: 1;
         cursor: text;
       }
       &:focus ~ .search {
-        left: 96%;
+        left: 86%;
         z-index: 6;
         &::before {
           top: 0;
