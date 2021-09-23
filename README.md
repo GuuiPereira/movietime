@@ -10,7 +10,7 @@
 ## 🚀 Getting started
 
 ```sh
-Clone the project and access the folder
+Clone the project and access the folder:
 $ git clone https://github.com/GuuiPereira/movietime
 $ cd movietime
 
